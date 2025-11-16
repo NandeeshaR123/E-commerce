@@ -1,0 +1,59 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build output
+dist/
+build/
+.tmp/
+
+# Coverage directory
+coverage/
+
+# Cache
+.cache/
+.eslintcache
+.parcel-cache/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+
+# Debugging dump files
+*.pid
+*.seed
+*.pid.lock
+
+# Optional npm cache directory
+.npm/
+
+# MongoDB local database files (if applicable)
+data/db/
+*.lock
+
+# Uploads (if stored locally — recommended to ignore)
+uploads/
+public/uploads/
