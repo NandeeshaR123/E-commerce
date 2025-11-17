@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
+const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
 const cartRoutes = require('./routes/cartRoutes');
@@ -10,6 +10,7 @@ const dbConfig = require('./config/db');
 const app = express();
 
 // Middleware
+app.use(cors());
 app.use(express.json());
 
 // Database connection
