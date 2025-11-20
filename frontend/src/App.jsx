@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import Header from './components/shared/Header';
 import Footer from './components/shared/Footer';
 import ProtectedRoute from './components/shared/ProtectedRoute';
+import AdminRoute from './components/shared/AdminRoute';
 
 // Pages
 import Home from './pages/Home';
@@ -62,25 +63,25 @@ function App() {
               <Route
                 path="/admin/products"
                 element={
-                  <ProtectedRoute>
+                  <AdminRoute>
                     <AdminProducts />
-                  </ProtectedRoute>
+                  </AdminRoute>
                 }
               />
               <Route
                 path="/admin/products/new"
                 element={
-                  <ProtectedRoute>
+                  <AdminRoute>
                     <ProductForm />
-                  </ProtectedRoute>
+                  </AdminRoute>
                 }
               />
               <Route
                 path="/admin/products/:id/edit"
                 element={
-                  <ProtectedRoute>
+                  <AdminRoute>
                     <ProductForm />
-                  </ProtectedRoute>
+                  </AdminRoute>
                 }
               />
             </Routes>

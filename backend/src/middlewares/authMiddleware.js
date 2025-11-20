@@ -24,4 +24,17 @@ const authMiddleware = (req, res, next) => {
     }
 };
 
-module.exports = { authMiddleware };
+const adminMiddleware = (req, res, next) => {
+    // This middleware should be used after authMiddleware
+    if (!req.user) {
+        return res.status(401).json({ message: 'Access denied. Authentication required.' });
+    }
+
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Access denied. Admin privileges required.' });
+    }
+
+    next();
+};
+
+module.exports = { authMiddleware, adminMiddleware };

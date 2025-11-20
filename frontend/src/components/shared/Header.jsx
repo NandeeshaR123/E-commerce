@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../hooks/useCart';
 
 const Header = () => {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, isAdmin } = useAuth();
   const { getCartItemCount, fetchCart } = useCart();
   const navigate = useNavigate();
   const itemCount = getCartItemCount();
@@ -56,12 +56,14 @@ const Header = () => {
                 >
                   Orders
                 </Link>
-                <Link
-                  to="/admin/products"
-                  className="text-gray-700 hover:text-primary-600 transition"
-                >
-                  Admin
-                </Link>
+                {isAdmin && (
+                  <Link
+                    to="/admin/products"
+                    className="text-gray-700 hover:text-primary-600 transition"
+                  >
+                    Admin
+                  </Link>
+                )}
                 <div className="flex items-center space-x-2">
                   <span className="text-gray-700">{user?.username}</span>
                   <button
