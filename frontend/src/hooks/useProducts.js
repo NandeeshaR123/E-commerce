@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { productService } from '../services/productService';
+import { isAuthError } from '../utils/api';
 
 export const useProducts = () => {
   const [products, setProducts] = useState([]);
@@ -17,7 +18,11 @@ export const useProducts = () => {
       const data = await productService.getAllProducts();
       setProducts(data);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to fetch products');
+      const errorMessage = err.response?.data?.message || 'Failed to fetch products';
+      setError({
+        message: errorMessage,
+        isAuthError: isAuthError(err),
+      });
     } finally {
       setLoading(false);
     }
@@ -48,6 +53,13 @@ export const useProducts = () => {
       await productService.deleteProduct(id);
       setProducts(products.filter((p) => p._id !== id));
     } catch (err) {
+      if (isAuthError(err)) {
+        const errorMessage = err.response?.data?.message || 'Your session has expired. Please login again.';
+        setError({
+          message: errorMessage,
+          isAuthError: true,
+        });
+      }
       throw err.response?.data || err;
     }
   };

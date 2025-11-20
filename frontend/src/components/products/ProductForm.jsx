@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useProducts } from '../../hooks/useProducts';
+import { isAuthError } from '../../utils/api';
 import Error from '../shared/Error';
 
 const ProductForm = () => {
@@ -15,7 +16,7 @@ const ProductForm = () => {
     category: '',
     stock: '',
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const isEditMode = !!id;
 
@@ -62,7 +63,15 @@ const ProductForm = () => {
 
       navigate('/admin/products');
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to save product');
+      const errorMessage = err.response?.data?.message || 'Failed to save product';
+      if (isAuthError(err)) {
+        setError({
+          message: errorMessage,
+          isAuthError: true,
+        });
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -79,7 +88,12 @@ const ProductForm = () => {
       </h1>
 
       <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6 space-y-6">
-        {error && <Error message={error} />}
+        {error && (
+          <Error 
+            message={typeof error === 'string' ? error : error.message} 
+            isAuthError={typeof error === 'object' && error.isAuthError}
+          />
+        )}
 
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">

@@ -28,13 +28,19 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      // handle the error and show login button
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      window.location.href = '/login';
+      // Dispatch custom event to notify AuthContext
+      window.dispatchEvent(new Event('tokenCleared'));
     }
     return Promise.reject(error);
   }
 );
+
+export const isAuthError = (error) => {
+  return error?.response?.status === 401;
+};
 
 export default api;
 

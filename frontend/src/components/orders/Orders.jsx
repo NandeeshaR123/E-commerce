@@ -20,7 +20,16 @@ const Orders = () => {
   }
 
   if (error) {
-    return <Error message={error} />;
+    const errorMessage = typeof error === 'string' ? error : error.message;
+    const isAuthError = typeof error === 'object' && error.isAuthError;
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Error 
+          message={errorMessage}
+          isAuthError={isAuthError}
+        />
+      </div>
+    );
   }
 
   if (!orders || orders.length === 0) {

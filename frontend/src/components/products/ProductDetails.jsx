@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../hooks/useCart';
 import { productService } from '../../services/productService';
+import { isAuthError } from '../../utils/api';
 import Loading from '../shared/Loading';
 import Error from '../shared/Error';
 
@@ -13,7 +14,7 @@ const ProductDetails = () => {
   const { addToCart } = useCart();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [addingToCart, setAddingToCart] = useState(false);
 
@@ -29,7 +30,11 @@ const ProductDetails = () => {
           setError('Product not found');
         }
       } catch (err) {
-        setError(err.response?.data?.message || 'Failed to fetch product');
+        const errorMessage = err.response?.data?.message || 'Failed to fetch product';
+        setError({
+          message: errorMessage,
+          isAuthError: isAuthError(err),
+        });
       } finally {
         setLoading(false);
       }
@@ -60,7 +65,16 @@ const ProductDetails = () => {
   }
 
   if (error || !product) {
-    return <Error message={error || 'Product not found'} />;
+    const errorMessage = typeof error === 'string' ? error : (error?.message || 'Product not found');
+    const isAuthError = typeof error === 'object' && error?.isAuthError;
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Error 
+          message={errorMessage || 'Product not found'}
+          isAuthError={isAuthError}
+        />
+      </div>
+    );
   }
 
   return (

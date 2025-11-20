@@ -53,7 +53,16 @@ const OrderDetails = () => {
   }
 
   if (error || !order) {
-    return <Error message={error || 'Order not found'} />;
+    const errorMessage = typeof error === 'string' ? error : (error?.message || 'Order not found');
+    const isAuthError = typeof error === 'object' && error?.isAuthError;
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Error 
+          message={errorMessage || 'Order not found'}
+          isAuthError={isAuthError}
+        />
+      </div>
+    );
   }
 
   return (

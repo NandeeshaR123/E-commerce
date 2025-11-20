@@ -84,7 +84,17 @@ const Cart = () => {
   }
 
   if (error) {
-    return <Error message={error} onRetry={fetchCart} />;
+    const errorMessage = typeof error === 'string' ? error : error.message;
+    const isAuthError = typeof error === 'object' && error.isAuthError;
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Error 
+          message={errorMessage} 
+          onRetry={!isAuthError ? fetchCart : null}
+          isAuthError={isAuthError}
+        />
+      </div>
+    );
   }
 
   const displayCart = enrichedCart || cart;

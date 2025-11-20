@@ -13,6 +13,28 @@ export const AuthProvider = ({ children }) => {
       setUser(currentUser);
     }
     setLoading(false);
+
+    // Listen for storage changes to sync user state when token is cleared
+    const handleStorageChange = (e) => {
+      if (e.key === 'user' || e.key === 'token') {
+        const user = authService.getCurrentUser();
+        setUser(user);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also listen for custom event when token is cleared programmatically
+    const handleTokenCleared = () => {
+      setUser(null);
+    };
+    
+    window.addEventListener('tokenCleared', handleTokenCleared);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('tokenCleared', handleTokenCleared);
+    };
   }, []);
 
   const login = async (credentials) => {

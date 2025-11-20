@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { orderService } from '../services/orderService';
+import { isAuthError } from '../utils/api';
 
 export const useOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -14,7 +15,13 @@ export const useOrders = () => {
       setOrders([...orders, data]);
       return data;
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to create order');
+      const errorMessage = err.response?.data?.message || 'Failed to create order';
+      if (isAuthError(err)) {
+        setError({
+          message: errorMessage,
+          isAuthError: true,
+        });
+      }
       throw err;
     } finally {
       setLoading(false);
@@ -28,7 +35,11 @@ export const useOrders = () => {
       const data = await orderService.getOrderById(orderId);
       return data;
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to fetch order');
+      const errorMessage = err.response?.data?.message || 'Failed to fetch order';
+      setError({
+        message: errorMessage,
+        isAuthError: isAuthError(err),
+      });
       throw err;
     } finally {
       setLoading(false);

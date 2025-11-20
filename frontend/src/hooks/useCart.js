@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { cartService } from '../services/cartService';
+import { isAuthError } from '../utils/api';
 
 export const useCart = () => {
   const [cart, setCart] = useState(null);
@@ -13,7 +14,11 @@ export const useCart = () => {
       const data = await cartService.getCart();
       setCart(data);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to fetch cart');
+      const errorMessage = err.response?.data?.message || 'Failed to fetch cart';
+      setError({
+        message: errorMessage,
+        isAuthError: isAuthError(err),
+      });
     } finally {
       setLoading(false);
     }
@@ -27,7 +32,13 @@ export const useCart = () => {
       setCart(data);
       return data;
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to add to cart');
+      const errorMessage = err.response?.data?.message || 'Failed to add to cart';
+      if (isAuthError(err)) {
+        setError({
+          message: errorMessage,
+          isAuthError: true,
+        });
+      }
       throw err;
     } finally {
       setLoading(false);
@@ -42,7 +53,13 @@ export const useCart = () => {
       setCart(data);
       return data;
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to remove from cart');
+      const errorMessage = err.response?.data?.message || 'Failed to remove from cart';
+      if (isAuthError(err)) {
+        setError({
+          message: errorMessage,
+          isAuthError: true,
+        });
+      }
       throw err;
     } finally {
       setLoading(false);
