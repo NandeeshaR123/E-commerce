@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../hooks/useCart';
@@ -8,6 +8,8 @@ const Header = () => {
   const { getCartItemCount, fetchCart } = useCart();
   const navigate = useNavigate();
   const itemCount = getCartItemCount();
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -16,18 +18,48 @@ const Header = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    if (showDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showDropdown]);
+
   const handleLogout = () => {
     logout();
     navigate('/');
+    setShowDropdown(false);
+  };
+
+  const handleLogoClick = (e) => {
+    if (isAuthenticated) {
+      e.preventDefault();
+      setShowDropdown(!showDropdown);
+    }
+  };
+
+  const handleDropdownItemClick = (path) => {
+    navigate(path);
+    setShowDropdown(false);
   };
 
   return (
     <header className="bg-white shadow-md">
       <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          <Link to="/" className="text-2xl font-bold text-primary-600">
-            E-Commerce
-          </Link>
+        <div className="flex items-center justify-between">   
+              <Link to="/" className="text-2xl font-bold text-primary-600">
+                E-Commerce
+              </Link>
 
           <nav className="flex items-center space-x-6">
             <Link
@@ -64,14 +96,55 @@ const Header = () => {
                     Admin
                   </Link>
                 )}
-                <div className="flex items-center space-x-2">
-                  <span className="text-gray-700">{user?.username}</span>
-                  <button
-                    onClick={handleLogout}
-                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition"
-                  >
-                    Logout
-                  </button>
+                <div className="relative" ref={dropdownRef}>
+                  {isAuthenticated && (
+                    <button
+                      onClick={handleLogoClick}
+                      className="text-2xl font-bold text-primary-600 hover:text-primary-700 transition cursor-pointer"
+                    >
+                      {user?.username}
+                    </button>
+                  )}
+
+                  {isAuthenticated && showDropdown && (
+                    <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                      <div className="py-1">
+                        <button
+                          onClick={() => handleDropdownItemClick('/')}
+                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                        >
+                          My Account
+                        </button>
+                        <button
+                          onClick={() => handleDropdownItemClick('/addresses')}
+                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                        >
+                          My Addresses
+                        </button>
+                        <button
+                          onClick={() => handleDropdownItemClick('/orders')}
+                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                        >
+                          My Orders
+                        </button>
+                        {isAdmin && (
+                          <button
+                            onClick={() => handleDropdownItemClick('/admin/products')}
+                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                          >
+                            Admin Panel
+                          </button>
+                        )}
+                        <div className="border-t border-gray-200 my-1"></div>
+                        <button
+                          onClick={handleLogout}
+                          className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition"
+                        >
+                          Logout
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </>
             ) : (

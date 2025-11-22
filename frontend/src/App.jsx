@@ -20,6 +20,8 @@ import Cart from './components/cart/Cart';
 import Orders from './components/orders/Orders';
 import OrderDetails from './components/orders/OrderDetails';
 
+import MyAddresses from './components/addresses/MyAddresses';
+
 // Admin Pages
 import AdminProducts from './components/admin/AdminProducts';
 import ProductForm from './components/products/ProductForm';
@@ -57,6 +59,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <OrderDetails />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/addresses"
+                element={
+                  <ProtectedRoute>
+                    <MyAddresses />
                   </ProtectedRoute>
                 }
               />

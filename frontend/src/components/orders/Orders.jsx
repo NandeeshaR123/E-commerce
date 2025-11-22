@@ -1,21 +1,12 @@
-import { useEffect, useState } from 'react';
 import { useOrders } from '../../hooks/useOrders';
 import OrderItem from './OrderItem';
 import Loading from '../shared/Loading';
 import Error from '../shared/Error';
 
 const Orders = () => {
-  const { orders, loading, error, setOrders } = useOrders();
-  const [fetching, setFetching] = useState(false);
+  const { orders, loading, error } = useOrders();
 
-  useEffect(() => {
-    // Note: Backend doesn't have getAllOrders endpoint
-    // Orders are stored in state when created
-    // You may need to add this endpoint to your backend
-    setFetching(false);
-  }, []);
-
-  if (loading || fetching) {
+  if (loading) {
     return <Loading />;
   }
 
