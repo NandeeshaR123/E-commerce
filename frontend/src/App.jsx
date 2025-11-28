@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
 import Header from './components/shared/Header';
 import Footer from './components/shared/Footer';
 import ProtectedRoute from './components/shared/ProtectedRoute';
@@ -29,76 +30,78 @@ import ProductForm from './components/products/ProductForm';
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <div className="flex flex-col min-h-screen">
-          <Header />
-          <main className="flex-grow">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/products/:id" element={<ProductDetails />} />
-              <Route
-                path="/cart"
-                element={
-                  <ProtectedRoute>
-                    <Cart />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/orders"
-                element={
-                  <ProtectedRoute>
-                    <Orders />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/orders/:orderId"
-                element={
-                  <ProtectedRoute>
-                    <OrderDetails />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/addresses"
-                element={
-                  <ProtectedRoute>
-                    <MyAddresses />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/products"
-                element={
-                  <AdminRoute>
-                    <AdminProducts />
-                  </AdminRoute>
-                }
-              />
-              <Route
-                path="/admin/products/new"
-                element={
-                  <AdminRoute>
-                    <ProductForm />
-                  </AdminRoute>
-                }
-              />
-              <Route
-                path="/admin/products/:id/edit"
-                element={
-                  <AdminRoute>
-                    <ProductForm />
-                  </AdminRoute>
-                }
-              />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
-      </Router>
+      <CartProvider>
+        <Router>
+          <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className="flex-grow">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/products/:id" element={<ProductDetails />} />
+                <Route
+                  path="/cart"
+                  element={
+                    <ProtectedRoute>
+                      <Cart />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/orders"
+                  element={
+                    <ProtectedRoute>
+                      <Orders />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/orders/:orderId"
+                  element={
+                    <ProtectedRoute>
+                      <OrderDetails />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/addresses"
+                  element={
+                    <ProtectedRoute>
+                      <MyAddresses />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/products"
+                  element={
+                    <AdminRoute>
+                      <AdminProducts />
+                    </AdminRoute>
+                  }
+                />
+                <Route
+                  path="/admin/products/new"
+                  element={
+                    <AdminRoute>
+                      <ProductForm />
+                    </AdminRoute>
+                  }
+                />
+                <Route
+                  path="/admin/products/:id/edit"
+                  element={
+                    <AdminRoute>
+                      <ProductForm />
+                    </AdminRoute>
+                  }
+                />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </Router>
+      </CartProvider>
     </AuthProvider>
   );
 }

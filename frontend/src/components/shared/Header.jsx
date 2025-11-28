@@ -5,11 +5,15 @@ import { useCart } from '../../hooks/useCart';
 
 const Header = () => {
   const { isAuthenticated, user, logout, isAdmin } = useAuth();
-  const { getCartItemCount, fetchCart } = useCart();
+  const { getCartItemCount, fetchCart, cart } = useCart();
   const navigate = useNavigate();
-  const itemCount = getCartItemCount();
+  const [itemCount, setItemCount] = useState(0);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    setItemCount(getCartItemCount());
+  }, [cart]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -98,23 +102,17 @@ const Header = () => {
                 )}
                 <div className="relative" ref={dropdownRef}>
                   {isAuthenticated && (
-                    <button
+                    <div
                       onClick={handleLogoClick}
-                      className="text-2xl font-bold text-primary-600 hover:text-primary-700 transition cursor-pointer"
+                      className="w-10 h-10 flex items-center justify-center rounded-full bg-primary-600 text-white text-lg font-bold cursor-pointer hover:bg-primary-700 transition select-none"
                     >
-                      {user?.username}
-                    </button>
+                      {user?.firstName?.[0]?.toUpperCase()}{user?.lastName?.[0]?.toUpperCase()}
+                    </div>
                   )}
 
                   {isAuthenticated && showDropdown && (
                     <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
                       <div className="py-1">
-                        <button
-                          onClick={() => handleDropdownItemClick('/')}
-                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-                        >
-                          My Account
-                        </button>
                         <button
                           onClick={() => handleDropdownItemClick('/addresses')}
                           className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"

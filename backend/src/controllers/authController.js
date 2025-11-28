@@ -4,11 +4,21 @@ const jwt = require('jsonwebtoken');
 
 // User registration
 exports.registerUser = async (req, res) => {
-    const { username, email, password } = req.body;
+    const { username, email, password, firstName, lastName } = req.body;
 
     try {
+        // Check if username or email already exists
+        const existingUserByUsername = await User.findOne({ username });
+        if (existingUserByUsername) {
+            return res.status(400).json({ message: 'Username already exists' });
+        }
+        const existingUserByEmail = await User.findOne({ email });
+        if (existingUserByEmail) {
+            return res.status(400).json({ message: 'Email already exists' });
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ username, email, password: hashedPassword });
+        const newUser = new User({ username, email, password: hashedPassword, firstName, lastName });
         await newUser.save();
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
@@ -32,7 +42,7 @@ exports.loginUser = async (req, res) => {
         }
 
         const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.status(200).json({ token, user: { id: user._id, username: user.username, email: user.email, role: user.role } });
+        res.status(200).json({ token, user: { id: user._id, username: user.username, email: user.email, role: user.role, firstName: user.firstName, lastName: user.lastName } });
     } catch (error) {
         res.status(500).json({ message: 'Error logging in', error });
     }
