@@ -25,9 +25,11 @@ const createAdmin = async () => {
     await connectDB();
 
     // Get admin details from command line arguments or use defaults
-    const username = process.argv[2] || 'admin';
-    const email = process.argv[3] || 'admin@example.com';
-    const password = process.argv[4] || 'admin123';
+    const firstName = process.argv[2] || 'Admin';
+    const lastName = process.argv[3] || 'User';
+    const username = process.argv[4] || 'admin';
+    const email = process.argv[5] || 'admin@example.com';
+    const password = process.argv[6] || 'admin123';
 
     // Check if user already exists
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
@@ -38,6 +40,8 @@ const createAdmin = async () => {
       } else {
         // Update existing user to admin
         existingUser.role = 'admin';
+        existingUser.firstName = firstName;
+        existingUser.lastName = lastName;
         const hashedPassword = await bcrypt.hash(password, 10);
         existingUser.password = hashedPassword;
         await existingUser.save();
@@ -49,6 +53,8 @@ const createAdmin = async () => {
     // Create new admin user
     const hashedPassword = await bcrypt.hash(password, 10);
     const adminUser = new User({
+      firstName,
+      lastName,
       username,
       email,
       password: hashedPassword,
@@ -57,6 +63,8 @@ const createAdmin = async () => {
 
     await adminUser.save();
     console.log(`Admin user created successfully!`);
+    console.log(`First Name: ${firstName}`);
+    console.log(`Last Name: ${lastName}`);
     console.log(`Username: ${username}`);
     console.log(`Email: ${email}`);
     console.log(`Password: ${password}`);
